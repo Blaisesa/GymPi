@@ -1,0 +1,43 @@
+:root {
+  color-scheme: dark;
+
+  /* Core surfaces */
+  --color-background: #11100e;
+  --color-surface: #1a1815;
+  --color-surface-raised: #23201c;
+  --color-surface-disabled: #2c2925;
+  --color-border-subtle: #3a342d;
+  --color-border-control: #74695e;
+
+  /* Content */
+  --color-text-primary: #f7f2ec;
+  --color-text-secondary: #c9bfb4;
+  --color-text-muted: #9e9489;
+  --color-text-disabled: #777069;
+
+  /* Brand and interaction */
+  --color-primary: #f2a66d;
+  --color-primary-hover: #ffc79f;
+  --color-primary-pressed: #d98950;
+  --color-on-primary: #23150c;
+  --color-focus-ring: #ffc79f;
+
+  /* Semantic states */
+  --color-positive: #b7c9a5;
+  --color-on-positive: #172011;
+  --color-information: #90b7c9;
+  --color-on-information: #101b20;
+  --color-danger: #e58c8c;
+  --color-on-danger: #2b1111;
+
+  /* Data visualisation */
+  --color-chart-primary: #f2a66d;
+  --color-chart-secondary: #b7c9a5;
+  --color-chart-tertiary: #90b7c9;
+  --color-chart-grid: #3a342d;
+  --color-chart-inactive: #5a5148;
+
+  /* Restrained atmospheric treatment */
+  --color-primary-glow: rgb(242 166 109 / 10%);
+  --color-overlay: rgb(0 0 0 / 64%);
+}
