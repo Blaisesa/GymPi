@@ -1,0 +1,55 @@
+.shell {
+  min-height: 100dvh;
+}
+
+.skipLink {
+  position: fixed;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 30;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-weight: 700;
+  text-decoration: none;
+  transform: translateY(-200%);
+}
+
+.skipLink:focus {
+  transform: translateY(0);
+}
+
+.header {
+  width: min(100%, 48rem);
+  margin: 0 auto;
+  padding: 1rem;
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.brand {
+  color: var(--color-primary);
+  font-size: 1.125rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.content {
+  width: min(100%, 48rem);
+  margin: 0 auto;
+  padding: 1.5rem 1rem calc(6rem + env(safe-area-inset-bottom));
+}
+
+.content h1 {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-size: clamp(1.75rem, 8vw, 2.5rem);
+  line-height: 1.1;
+}
+
+.content p {
+  max-width: 40rem;
+  margin: 0.75rem 0 0;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
