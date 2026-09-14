@@ -1,0 +1,14 @@
+<!-- 
+    will contain the API endpoints and controllers.
+ -->
+
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <RootNamespace>GymPi.Api</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GymPi.Application\GymPi.Application.csproj" />
+    <ProjectReference Include="..\GymPi.Infrastructure\GymPi.Infrastructure.csproj" />
+  </ItemGroup>
+</Project>

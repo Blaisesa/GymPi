@@ -1,0 +1,15 @@
+<!-- 
+    will contain PostgreSQL, EF Core, file storage, external APIs, notifications, 
+    and other technical implementations.
+ -->
+
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>GymPi.Infrastructure</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GymPi.Application\GymPi.Application.csproj" />
+    <ProjectReference Include="..\GymPi.Domain\GymPi.Domain.csproj" />
+  </ItemGroup>
+</Project>

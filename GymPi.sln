@@ -1,0 +1,39 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GymPi.Domain", "src\backend\GymPi.Domain\GymPi.Domain.csproj", "{2C24331E-14D3-4A72-A775-808F32529C05}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GymPi.Application", "src\backend\GymPi.Application\GymPi.Application.csproj", "{3AA871CE-7D65-44BF-A277-07D833B80AF6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GymPi.Infrastructure", "src\backend\GymPi.Infrastructure\GymPi.Infrastructure.csproj", "{EF940E94-36F3-4C36-BCB4-A977EA94DB78}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GymPi.Api", "src\backend\GymPi.Api\GymPi.Api.csproj", "{8FD0D04D-58BA-4882-8AA3-A7915266146A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2C24331E-14D3-4A72-A775-808F32529C05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C24331E-14D3-4A72-A775-808F32529C05}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C24331E-14D3-4A72-A775-808F32529C05}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C24331E-14D3-4A72-A775-808F32529C05}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3AA871CE-7D65-44BF-A277-07D833B80AF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3AA871CE-7D65-44BF-A277-07D833B80AF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3AA871CE-7D65-44BF-A277-07D833B80AF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3AA871CE-7D65-44BF-A277-07D833B80AF6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF940E94-36F3-4C36-BCB4-A977EA94DB78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF940E94-36F3-4C36-BCB4-A977EA94DB78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF940E94-36F3-4C36-BCB4-A977EA94DB78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF940E94-36F3-4C36-BCB4-A977EA94DB78}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8FD0D04D-58BA-4882-8AA3-A7915266146A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8FD0D04D-58BA-4882-8AA3-A7915266146A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8FD0D04D-58BA-4882-8AA3-A7915266146A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8FD0D04D-58BA-4882-8AA3-A7915266146A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

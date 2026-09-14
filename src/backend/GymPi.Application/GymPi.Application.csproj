@@ -1,0 +1,14 @@
+<!-- 
+    contains use cases and application coordination. 
+    It can depend on the domain model.
+-->
+
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>GymPi.Application</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GymPi.Domain\GymPi.Domain.csproj" />
+  </ItemGroup>
+</Project>

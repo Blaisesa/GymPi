@@ -1,0 +1,10 @@
+<!-- 
+    contains the core business model and rules. 
+    It deliberately references nothing else. 
+-->
+
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>GymPi.Domain</RootNamespace>
+  </PropertyGroup>
+</Project>
