@@ -120,6 +120,19 @@ The exact typeface will be selected separately. Until then:
 - use tabular numerals for aligned metrics and changing values;
 - keep feedback factual, encouraging, and free from shame-based language.
 
+## Responsive layout and navigation
+
+- Design for compact phone screens first; wider layouts progressively enhance the same content and behaviour.
+- Support layouts from 320 CSS pixels without horizontal page overflow.
+- Use fluid sizing and content-driven breakpoints rather than device-specific breakpoints.
+- Prefer `min-width` media queries so the base rules remain the phone experience.
+- Keep primary actions reachable and comfortably sized for touch.
+- Respect display safe areas when positioning persistent navigation or actions.
+- Use a bottom navigation bar for the five primary destinations on compact screens: Home, Metrics, Workouts, Nutrition, and AI Chat.
+- Adapt the same destinations to a navigation rail or sidebar when wider layouts make bottom navigation inappropriate.
+- Always pair navigation icons with visible text labels.
+- Preserve a clear active state without relying on colour alone.
+
 ## Motion
 
 - Motion explains state change, progress, or navigation; it is not decoration.
