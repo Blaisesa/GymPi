@@ -1,5 +1,7 @@
 using GymPi.Api.Health;
+using GymPi.Api.Hydration;
 using GymPi.Api.Profiles;
+using GymPi.Application.Hydration;
 using GymPi.Application.Profiles;
 using GymPi.Infrastructure;
 
@@ -12,6 +14,8 @@ builder.Services.AddHealthChecks();
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddScoped<CreateProfileHandler>();
 builder.Services.AddScoped<ListProfilesHandler>();
+builder.Services.AddScoped<RecordHydrationHandler>();
+builder.Services.AddScoped<GetHydrationOverviewHandler>();
 builder.Services.AddGymPiInfrastructure(builder.Configuration);
 
 var app = builder.Build();
@@ -24,6 +28,7 @@ app.MapHealthChecks(
             new SystemHealthResponse(report.Status.ToString().ToLowerInvariant())),
     });
 app.MapProfileEndpoints();
+app.MapHydrationEndpoints();
 
 app.Run();
 

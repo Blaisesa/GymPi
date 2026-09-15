@@ -27,6 +27,9 @@
   --color-on-positive: #172011;
   --color-information: #90b7c9;
   --color-on-information: #101b20;
+  --color-information-glow: rgb(144 183 201 / 14%);
+  --color-water-light: #b9d9e7;
+  --color-glass-highlight: rgb(255 255 255 / 18%);
   --color-danger: #e58c8c;
   --color-on-danger: #2b1111;
 

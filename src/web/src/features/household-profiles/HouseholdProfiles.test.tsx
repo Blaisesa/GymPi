@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { HouseholdProfiles } from "./HouseholdProfiles";
+import { ActiveProfileProvider } from "./ActiveProfileProvider";
 import * as profileClient from "./profileClient";
 
 vi.mock("./profileClient");
@@ -35,7 +36,11 @@ describe("HouseholdProfiles", () => {
     vi.mocked(profileClient.listProfiles).mockResolvedValue([]);
     vi.mocked(profileClient.createProfile).mockResolvedValue(firstProfile);
 
-    render(<HouseholdProfiles />);
+    render(
+      <ActiveProfileProvider>
+        <HouseholdProfiles />
+      </ActiveProfileProvider>,
+    );
 
     await user.type(
       await screen.findByRole("textbox", { name: "Display name" }),
@@ -74,7 +79,11 @@ describe("HouseholdProfiles", () => {
       secondProfile,
     ]);
 
-    render(<HouseholdProfiles />);
+    render(
+      <ActiveProfileProvider>
+        <HouseholdProfiles />
+      </ActiveProfileProvider>,
+    );
 
     const selector = await screen.findByRole("combobox", {
       name: "Active profile",

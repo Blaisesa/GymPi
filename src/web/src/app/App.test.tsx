@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router";
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 
 import { App } from "./App";
 
@@ -12,6 +12,10 @@ function renderApp(initialEntry = "/") {
     </MemoryRouter>,
   );
 }
+
+beforeEach(() => {
+  localStorage.clear();
+});
 
 describe("App", () => {
   it("renders a directly requested primary destination", () => {
@@ -70,5 +74,32 @@ describe("App", () => {
     ).toBeInTheDocument();
 
     expect(workoutsLink).toHaveAttribute("aria-current", "page");
+  });
+
+  it("renders the dedicated hydration page", () => {
+    renderApp("/hydration");
+
+    expect(
+      screen.getByRole("heading", {
+        level: 1,
+        name: "Hydration",
+      }),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Choose a household profile first.")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Choose profile" })).toHaveAttribute(
+      "href",
+      "/",
+    );
+  });
+
+  it("opens hydration from the Home dashboard", async () => {
+    const user = userEvent.setup();
+    renderApp();
+
+    await user.click(screen.getByRole("link", { name: "Track hydration" }));
+
+    expect(
+      screen.getByRole("heading", { level: 1, name: "Hydration" }),
+    ).toBeInTheDocument();
   });
 });

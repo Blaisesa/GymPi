@@ -1,4 +1,6 @@
+using GymPi.Application.Hydration;
 using GymPi.Application.Profiles;
+using GymPi.Infrastructure.Hydration;
 using GymPi.Infrastructure.Persistence;
 using GymPi.Infrastructure.Profiles;
 
@@ -20,6 +22,7 @@ public static class DependencyInjection
                     ?? throw new InvalidOperationException(
                         "Connection string 'GymPi' is required for persistent features.")));
         services.AddScoped<IProfileStore, PostgresProfileStore>();
+        services.AddScoped<IHydrationStore, PostgresHydrationStore>();
 
         return services;
     }

@@ -1,3 +1,4 @@
+using GymPi.Domain.Hydration;
 using GymPi.Domain.Profiles;
 using GymPi.Infrastructure.Persistence.Configurations;
 
@@ -15,8 +16,12 @@ public sealed class GymPiDbContext : DbContext
     internal DbSet<HouseholdProfile> HouseholdProfiles =>
         Set<HouseholdProfile>();
 
+    internal DbSet<HydrationEntry> HydrationEntries =>
+        Set<HydrationEntry>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.ApplyConfiguration(new HydrationEntryConfiguration());
         modelBuilder.ApplyConfiguration(new HouseholdProfileConfiguration());
     }
 }

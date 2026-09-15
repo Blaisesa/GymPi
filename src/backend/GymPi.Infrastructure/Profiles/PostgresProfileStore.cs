@@ -23,6 +23,17 @@ internal sealed class PostgresProfileStore : IProfileStore
         await dbContext.SaveChangesAsync(cancellationToken);
     }
 
+    public Task<HouseholdProfile?> GetAsync(
+        Guid profileId,
+        CancellationToken cancellationToken)
+    {
+        return dbContext.HouseholdProfiles
+            .AsNoTracking()
+            .SingleOrDefaultAsync(
+                profile => profile.Id == profileId,
+                cancellationToken);
+    }
+
     public async Task<IReadOnlyList<HouseholdProfile>> ListAsync(
         CancellationToken cancellationToken)
     {

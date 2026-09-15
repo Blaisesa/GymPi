@@ -86,11 +86,11 @@ The optional llama.cpp service receives small, authorised, precomputed contexts 
 
 ## Current phase
 
-Implementing the first persistent product slice: local household profile creation, listing, and selection.
+Implementing hydration tracking for the active local household profile through append-only entries, a dedicated mobile-first page, and persisted daily progress.
 
 ## Next vertical slice
 
-Record hydration for the active profile and display its persisted daily total on the Home dashboard.
+Display a seven-day hydration graph and bounded, paginated hydration history.
 
 ## Open questions
 

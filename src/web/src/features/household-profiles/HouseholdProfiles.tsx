@@ -6,9 +6,8 @@ import {
   listProfiles,
   type HouseholdProfile,
 } from "./profileClient";
+import { useActiveProfile } from "./ActiveProfileContext";
 import styles from "./HouseholdProfiles.module.css";
-
-const activeProfileStorageKey = "gympi.activeProfileId";
 
 type LoadState = "loading" | "ready" | "error";
 
@@ -17,9 +16,9 @@ function defaultTimeZone(): string {
 }
 
 export function HouseholdProfiles() {
+  const { activeProfileId, selectActiveProfile } = useActiveProfile();
   const [loadState, setLoadState] = useState<LoadState>("loading");
   const [profiles, setProfiles] = useState<HouseholdProfile[]>([]);
-  const [activeProfileId, setActiveProfileId] = useState<string | null>(null);
   const [isAdding, setIsAdding] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [creationError, setCreationError] = useState<string | null>(null);
@@ -27,6 +26,7 @@ export function HouseholdProfiles() {
   const [timeZoneId, setTimeZoneId] = useState(defaultTimeZone);
   const [dailyHydrationGoalMl, setDailyHydrationGoalMl] = useState("2500");
   const createController = useRef<AbortController | null>(null);
+  const initialActiveProfileId = useRef(activeProfileId);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -41,19 +41,12 @@ export function HouseholdProfiles() {
         setLoadState("ready");
         setIsAdding(loadedProfiles.length === 0);
 
-        const savedProfileId = localStorage.getItem(activeProfileStorageKey);
         const selectedProfile = loadedProfiles.find(
-          (profile) => profile.id === savedProfileId,
+          (profile) => profile.id === initialActiveProfileId.current,
         );
         const nextProfileId = selectedProfile?.id ?? loadedProfiles[0]?.id ?? null;
 
-        setActiveProfileId(nextProfileId);
-
-        if (nextProfileId === null) {
-          localStorage.removeItem(activeProfileStorageKey);
-        } else {
-          localStorage.setItem(activeProfileStorageKey, nextProfileId);
-        }
+        selectActiveProfile(nextProfileId);
       })
       .catch(() => {
         if (!controller.signal.aborted) {
@@ -65,15 +58,14 @@ export function HouseholdProfiles() {
       controller.abort();
       createController.current?.abort();
     };
-  }, []);
+  }, [selectActiveProfile]);
 
   const activeProfile = profiles.find(
     (profile) => profile.id === activeProfileId,
   );
 
   function selectProfile(profileId: string) {
-    setActiveProfileId(profileId);
-    localStorage.setItem(activeProfileStorageKey, profileId);
+    selectActiveProfile(profileId);
   }
 
   async function submitProfile(event: FormEvent<HTMLFormElement>) {
