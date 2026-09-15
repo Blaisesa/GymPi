@@ -86,15 +86,14 @@ The optional llama.cpp service receives small, authorised, precomputed contexts 
 
 ## Current phase
 
-Approved system architecture, threat modelling, and first vertical-slice planning.
+Implementing hydration tracking through append-only entries, a general bounded-range API resource, and an accessible seven-day view.
 
 ## Next vertical slice
 
-First-run household bootstrap: launch the local stack, create the household owner securely, sign in, and display an authenticated empty dashboard with data persisted in PostgreSQL.
+Provide bounded, paginated hydration entry history with stable ordering.
 
 ## Open questions
 
-- Which open-source licence GymPi will use.
 - Which reverse proxy will be included in the Pi deployment.
 - Which external food database will be the initial provider.
 - Which Irish and US supermarkets can be supported safely and maintainably.

@@ -1,0 +1,158 @@
+.card {
+  margin-top: 1.5rem;
+  padding: 1.125rem;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 1rem;
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      var(--color-primary-glow),
+      transparent 48%
+    ),
+    var(--color-surface);
+}
+
+.header,
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.eyebrow,
+.heading,
+.message,
+.error,
+.formTitle,
+.help,
+.details dt,
+.details dd {
+  margin: 0;
+}
+
+.eyebrow {
+  color: var(--color-primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.heading {
+  margin-top: 0.125rem;
+  color: var(--color-text-primary);
+  font-size: 1.25rem;
+  line-height: 1.2;
+}
+
+.message,
+.error {
+  margin-top: 1rem;
+  line-height: 1.5;
+}
+
+.message {
+  color: var(--color-text-secondary);
+}
+
+.error {
+  color: var(--color-danger);
+}
+
+.profileSummary,
+.form {
+  display: grid;
+  margin-top: 1rem;
+  gap: 0.625rem;
+}
+
+.label {
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.control {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.625rem 0.75rem;
+  border: 1px solid var(--color-border-control);
+  border-radius: 0.625rem;
+  background: var(--color-surface-raised);
+  color: var(--color-text-primary);
+}
+
+.details {
+  display: grid;
+  margin: 0.5rem 0 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.details div {
+  min-width: 0;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  background: var(--color-surface-raised);
+}
+
+.details dt,
+.help {
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+}
+
+.details dd {
+  margin-top: 0.25rem;
+  overflow-wrap: anywhere;
+  color: var(--color-text-primary);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.formTitle {
+  color: var(--color-text-primary);
+  font-weight: 700;
+}
+
+.actions {
+  margin-top: 0.5rem;
+  justify-content: flex-end;
+}
+
+.primaryButton,
+.secondaryButton {
+  min-height: 2.75rem;
+  padding: 0.625rem 0.875rem;
+  border-radius: 0.625rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.primaryButton {
+  border: 1px solid var(--color-primary);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+.secondaryButton {
+  border: 1px solid var(--color-border-control);
+  background: transparent;
+  color: var(--color-text-primary);
+}
+
+.primaryButton:hover {
+  border-color: var(--color-primary-hover);
+  background: var(--color-primary-hover);
+}
+
+.primaryButton:active {
+  border-color: var(--color-primary-pressed);
+  background: var(--color-primary-pressed);
+}
+
+.primaryButton:disabled,
+.secondaryButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}

@@ -1,0 +1,56 @@
+.card {
+  display: flex;
+  margin-top: 1.5rem;
+  padding: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 1rem;
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      var(--color-primary-glow),
+      transparent 55%
+    ),
+    var(--color-surface);
+}
+
+.heading {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  line-height: 1.25;
+  text-transform: uppercase;
+}
+
+.status {
+  display: inline-flex;
+  margin: 0;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-text-primary);
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.dot {
+  width: 0.625rem;
+  height: 0.625rem;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--color-information);
+}
+
+.connected .dot {
+  background: var(--color-positive);
+  box-shadow: 0 0 0.75rem rgb(183 201 165 / 35%);
+}
+
+.unavailable .dot {
+  background: var(--color-danger);
+  box-shadow: 0 0 0.75rem rgb(229 140 140 / 30%);
+}

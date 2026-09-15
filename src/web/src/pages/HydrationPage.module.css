@@ -1,0 +1,531 @@
+/* Hydration presentation only; persisted totals remain the source of truth. */
+.page {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.page .eyebrow, .page .total, .page .remaining, .page .error,
+.pageHeader p, .page h2 {
+  margin: 0;
+}
+
+.pageHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.pageHeader > div {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.page .eyebrow {
+  color: var(--color-information);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.page h2 {
+  font-size: 1.1875rem;
+  font-weight: 650;
+  letter-spacing: -0.025em;
+}
+
+.todayCard, .weekCard, .addCard, .historyCard, .emptyState {
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 1.5rem;
+  background: var(--color-surface);
+}
+
+.todayCard {
+  display: grid;
+  position: relative;
+  overflow: hidden;
+  padding: 1.5rem 1.25rem 0;
+  background: radial-gradient(ellipse at 50% 55%, var(--color-information-glow), transparent 65%), var(--color-surface);
+}
+
+.todayCopy {
+  display: grid;
+  justify-items: center;
+  gap: 0.25rem;
+  text-align: center;
+}
+
+.heroAmount {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  color: var(--color-text-primary);
+  font-size: clamp(2.75rem, 12vw, 4rem);
+  font-weight: 650;
+  line-height: 1.1;
+  letter-spacing: -0.055em;
+  font-variant-numeric: tabular-nums;
+}
+
+.heroAmount > span {
+  color: var(--color-text-muted);
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.page .total {
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+}
+
+.page .remaining {
+  color: var(--color-information);
+  font-size: 0.8125rem;
+}
+
+.tankStage {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  padding: 1.75rem 0 1.5rem;
+  isolation: isolate;
+}
+
+.vessel {
+  position: relative;
+  z-index: 1;
+  width: 12rem;
+  height: 14rem;
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid var(--color-information);
+  border-radius: 2rem 2rem 3.5rem 3.5rem / 1rem 1rem 2rem 2rem;
+  background: linear-gradient(100deg, var(--color-glass-highlight), transparent 18% 80%, var(--color-information-glow)), var(--color-surface);
+  box-shadow: inset 0 0 0 5px var(--color-information-glow),
+    inset 0 -8px 12px var(--color-information-glow), 0 1.25rem 2rem -1rem var(--color-overlay);
+}
+
+/* Glass rim and reflected edge sit above the fluid, below the readout. */
+.vessel::before, .vessel::after {
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+  content: "";
+}
+
+.vessel::before {
+  inset: 4px 6px auto;
+  height: 1.1rem;
+  border: 1px solid var(--color-glass-highlight);
+  border-radius: 50%;
+  background: linear-gradient(var(--color-information-glow), transparent);
+}
+
+.vessel::after {
+  inset: 1.6rem auto 1.75rem 0.75rem;
+  width: 0.375rem;
+  border-radius: 999px;
+  background: linear-gradient(var(--color-glass-highlight), transparent);
+}
+
+.water {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: var(--water-level);
+  background: linear-gradient(100deg, var(--color-glass-highlight), transparent 25% 70%, var(--color-information-glow)),
+    linear-gradient(var(--color-information), var(--color-on-information));
+  transition: height 850ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.wave {
+  position: absolute;
+  inset: -12px auto auto 0;
+  width: 200%;
+  height: 24px;
+  fill: var(--color-information);
+  animation: waterSettle 1.4s ease-in-out 3 alternate;
+}
+
+.waterSurface {
+  position: absolute;
+  inset: -5px 0 auto;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color-glass-highlight);
+}
+
+.vessel[data-empty="true"] .water {
+  visibility: hidden;
+}
+
+.tankScale {
+  position: absolute;
+  inset: 0 0.5rem 0 auto;
+  z-index: 2;
+  width: 1.8rem;
+  color: var(--color-text-primary);
+  font-size: 0.5625rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.tankScale > span {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  transform: translateY(50%);
+  text-shadow: 0 1px 3px var(--color-overlay);
+}
+
+.tankScale > span::before {
+  width: 0.5rem;
+  height: 1px;
+  background: var(--color-glass-highlight);
+  content: "";
+}
+
+.percentage {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  color: var(--color-text-primary);
+  text-shadow: 0 2px 8px var(--color-overlay);
+}
+
+.percentage > strong {
+  padding-inline: 0.375rem;
+  border-radius: 0.5rem;
+  background: var(--color-overlay);
+  font-size: 2.5rem;
+  font-weight: 600;
+  letter-spacing: -0.06em;
+  font-variant-numeric: tabular-nums;
+}
+
+.percentage small {
+  font-size: 1.125rem;
+  margin-left: 0.2rem;
+}
+
+.percentage > span {
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  background: var(--color-overlay);
+  font-size: 0.625rem;
+  letter-spacing: 0.04em;
+}
+
+.tankBase {
+  position: absolute;
+  bottom: 1rem;
+  width: 14rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, var(--color-information-glow), transparent 70%);
+}
+
+.todayFooter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  padding-block: 1rem;
+  border-top: 1px solid var(--color-border-subtle);
+  color: var(--color-text-secondary);
+  font-size: 0.6875rem;
+}
+
+.todayFooter > svg {
+  color: var(--color-information);
+}
+
+.goalLabel {
+  margin-left: auto;
+}
+
+.weekCard, .addCard, .historyCard, .emptyState {
+  padding: 1.25rem;
+}
+
+.weekCard, .addCard, .historyCard {
+  display: grid;
+  align-content: start;
+  gap: 1rem;
+}
+
+.weekChart {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.375rem;
+  min-height: 11rem;
+}
+
+.day {
+  display: grid;
+  grid-template-rows: 7rem auto auto;
+  justify-items: center;
+  gap: 0.375rem;
+  min-width: 0;
+}
+
+.dayTrack {
+  display: flex;
+  width: min(100%, 1.75rem);
+  height: 7rem;
+  align-items: flex-end;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--color-surface-raised);
+}
+
+.dayBar {
+  width: 100%;
+  min-height: 0.1875rem;
+  height: var(--day-progress);
+  border-radius: 999px;
+  background: linear-gradient(
+    var(--color-information),
+    var(--color-on-information)
+  );
+  transition: height 650ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.dayLabel {
+  color: var(--color-text-secondary);
+  font-size: 0.6875rem;
+  font-weight: 700;
+}
+
+.dayValue {
+  overflow: hidden;
+  width: 100%;
+  color: var(--color-text-muted);
+  font-size: 0.5625rem;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.quickActions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.625rem;
+}
+
+.quickButton, .customControl button, .primaryLink, .soundButton {
+  min-height: 3rem;
+  border: 1px solid var(--color-primary);
+  border-radius: 0.875rem;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 160ms ease, transform 160ms ease;
+}
+
+.soundButton {
+  display: grid;
+  width: 3rem;
+  flex: 0 0 auto;
+  padding: 0;
+  place-items: center;
+  border-color: var(--color-border-control);
+  background: var(--color-surface);
+  color: var(--color-information);
+}
+
+.quickButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 5rem;
+  padding: 0.75rem 0.5rem;
+  border-color: var(--color-border-control);
+  background: var(--color-surface-raised);
+  color: var(--color-primary);
+}
+
+.quickButton > svg:last-child {
+  display: none;
+}
+
+.quickButtonCopy {
+  display: grid;
+  gap: 0.25rem;
+  text-align: left;
+}
+
+.quickButtonCopy strong {
+  font-size: 1rem;
+}
+
+.quickButtonCopy > span {
+  color: var(--color-text-secondary);
+  font-size: 0.6875rem;
+  font-weight: 400;
+}
+
+.quickButton:disabled, .customControl button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.customForm {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.customForm label {
+  color: var(--color-text-secondary);
+  font-size: 0.8125rem;
+}
+
+.customControl {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.customControl input {
+  min-width: 0;
+  min-height: 3rem;
+  padding: 0.625rem 0.75rem;
+  border: 1px solid var(--color-border-control);
+  border-radius: 0.875rem;
+  background: var(--color-background);
+  color: var(--color-text-primary);
+}
+
+.customControl > span {
+  color: var(--color-text-muted);
+  font-size: 0.8125rem;
+}
+
+.customControl button {
+  padding-inline: 1.25rem;
+}
+
+.entryList {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.entryList li {
+  display: flex;
+  min-height: 3.5rem;
+  align-items: center;
+  gap: 0.75rem;
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.entryList li:last-child {
+  border-bottom: 0;
+}
+
+.entryIcon {
+  box-sizing: content-box;
+  padding: 0.5rem;
+  border-radius: 0.75rem;
+  background: var(--color-information-glow);
+  color: var(--color-information);
+}
+
+.entryList span {
+  color: var(--color-text-primary);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.entryList time {
+  margin-left: auto;
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+}
+
+.emptyState {
+  display: grid;
+  justify-items: start;
+  gap: 0.75rem;
+  color: var(--color-information);
+}
+
+.primaryLink {
+  display: inline-flex;
+  padding-inline: 1rem;
+  align-items: center;
+  text-decoration: none;
+}
+
+.page .error {
+  color: var(--color-danger);
+}
+
+@keyframes waterSettle {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (hover: hover) {
+  .quickButton:hover:not(:disabled), .soundButton:hover {
+    background: var(--color-primary-glow);
+  }
+  .customControl button:hover:not(:disabled), .primaryLink:hover {
+    background: var(--color-primary-hover);
+  }
+}
+
+.quickButton:active:not(:disabled), .customControl button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+@media (min-width: 40rem) {
+  .todayCard {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: center;
+    padding-inline: 2rem;
+  }
+  .todayCopy {
+    justify-items: start;
+    text-align: left;
+  }
+  .todayFooter {
+    grid-column: 1 / -1;
+    font-size: 0.8125rem;
+  }
+  .quickButton {
+    justify-content: flex-start;
+    padding-inline: 1rem;
+  }
+  .quickButton > svg:last-child {
+    display: block;
+    margin-left: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .water, .dayBar, .quickButton, .customControl button, .soundButton, .primaryLink {
+    transition: none;
+  }
+  .wave {
+    animation: none;
+  }
+}
