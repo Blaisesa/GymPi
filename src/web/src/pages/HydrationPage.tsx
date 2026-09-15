@@ -5,9 +5,9 @@ import { Link } from "react-router";
 
 import { useActiveProfile } from "../features/household-profiles/ActiveProfileContext";
 import {
-  getHydrationOverview,
+  getHydration,
   recordHydrationEntry,
-  type HydrationOverview,
+  type HydrationSummary,
 } from "../features/hydration/hydrationClient";
 import { playWaterDrop } from "../features/hydration/waterDropSound";
 import styles from "./HydrationPage.module.css";
@@ -16,7 +16,7 @@ const soundStorageKey = "gympi.hydrationSoundEnabled";
 
 export function HydrationPage() {
   const { activeProfileId } = useActiveProfile();
-  const [overview, setOverview] = useState<HydrationOverview | null>(null);
+  const [overview, setOverview] = useState<HydrationSummary | null>(null);
   const [loadedProfileId, setLoadedProfileId] = useState<string | null>(null);
   const [failedProfileId, setFailedProfileId] = useState<string | null>(null);
   const [customAmount, setCustomAmount] = useState("350");
@@ -34,7 +34,7 @@ export function HydrationPage() {
 
     const controller = new AbortController();
 
-    void getHydrationOverview(activeProfileId, controller.signal)
+    void getHydration(activeProfileId, 7, controller.signal)
       .then((loadedOverview) => {
         if (!controller.signal.aborted) {
           setOverview(loadedOverview);
@@ -74,8 +74,9 @@ export function HydrationPage() {
       }
 
       try {
-        const updatedOverview = await getHydrationOverview(
+        const updatedOverview = await getHydration(
           activeProfileId,
+          7,
           controller.signal,
         );
 
@@ -112,8 +113,13 @@ export function HydrationPage() {
     localStorage.setItem(soundStorageKey, String(nextSoundEnabled));
   }
 
+  const today = overview?.days.at(-1) ?? null;
+  const consumedMl = today?.consumedMl ?? 0;
+  const remainingMl = overview
+    ? Math.max(0, overview.dailyGoalMl - consumedMl)
+    : 0;
   const progress = overview
-    ? Math.round((overview.consumedMl / overview.goalMl) * 100)
+    ? Math.round((consumedMl / overview.dailyGoalMl) * 100)
     : 0;
   const visualProgress = Math.min(progress, 100);
   const waterStyle = {
@@ -177,16 +183,16 @@ export function HydrationPage() {
               <p className={styles.eyebrow}>Today</p>
               <h2 id="today-title">Keep your flow</h2>
               <div aria-hidden="true" className={styles.heroAmount}>
-                {new Intl.NumberFormat().format(overview.consumedMl)}
+                {new Intl.NumberFormat().format(consumedMl)}
                 <span>ml</span>
               </div>
               <p aria-live="polite" className={styles.total}>
-                {new Intl.NumberFormat().format(overview.consumedMl)} of{" "}
-                {new Intl.NumberFormat().format(overview.goalMl)} ml
+                {new Intl.NumberFormat().format(consumedMl)} of{" "}
+                {new Intl.NumberFormat().format(overview.dailyGoalMl)} ml
               </p>
               <p className={styles.remaining}>
-                {overview.remainingMl > 0
-                  ? `${new Intl.NumberFormat().format(overview.remainingMl)} ml to go`
+                {remainingMl > 0
+                  ? `${new Intl.NumberFormat().format(remainingMl)} ml to go`
                   : "Daily goal reached"}
               </p>
             </div>
@@ -197,16 +203,16 @@ export function HydrationPage() {
                 aria-valuemax={100}
                 aria-valuemin={0}
                 aria-valuenow={visualProgress}
-                aria-valuetext={`${overview.consumedMl} of ${overview.goalMl} ml`}
+                aria-valuetext={`${consumedMl} of ${overview.dailyGoalMl} ml`}
                 className={styles.vessel}
-                data-empty={overview.consumedMl === 0}
+                data-empty={consumedMl === 0}
                 role="progressbar"
                 style={waterStyle}
               >
                 <div aria-hidden="true" className={styles.water}>
                   <svg
                     className={styles.wave}
-                    key={overview.consumedMl}
+                    key={consumedMl}
                     viewBox="0 0 400 24"
                     preserveAspectRatio="none"
                   >
@@ -234,12 +240,69 @@ export function HydrationPage() {
             <div className={styles.todayFooter}>
               <Droplets aria-hidden="true" size={16} />
               <span>
-                {overview.entries.length}{" "}
-                {overview.entries.length === 1 ? "drink" : "drinks"} recorded
+                {overview.todayEntries.length}{" "}
+                {overview.todayEntries.length === 1 ? "drink" : "drinks"} recorded
               </span>
               <span className={styles.goalLabel}>
-                Goal · {new Intl.NumberFormat().format(overview.goalMl)} ml
+                Goal · {new Intl.NumberFormat().format(overview.dailyGoalMl)} ml
               </span>
+            </div>
+          </section>
+
+          <section
+            aria-labelledby="hydration-week-title"
+            className={styles.weekCard}
+            role="region"
+          >
+            <div>
+              <p className={styles.eyebrow}>Seven-day view</p>
+              <h2 id="hydration-week-title">Last seven days</h2>
+            </div>
+            <div className={styles.weekChart}>
+              {overview.days.map((day, index) => {
+                const barProgress = Math.min(
+                  Math.round((day.consumedMl / overview.dailyGoalMl) * 100),
+                  100,
+                );
+                const isToday = index === overview.days.length - 1;
+
+                return (
+                  <div className={styles.day} key={day.localDate}>
+                    <div
+                      aria-label={`${day.localDate}: ${day.consumedMl} ml`}
+                      aria-valuemax={overview.dailyGoalMl}
+                      aria-valuemin={0}
+                      aria-valuenow={Math.min(
+                        day.consumedMl,
+                        overview.dailyGoalMl,
+                      )}
+                      aria-valuetext={`${day.consumedMl} ml`}
+                      className={styles.dayTrack}
+                      role="meter"
+                    >
+                      <span
+                        className={styles.dayBar}
+                        style={{ "--day-progress": `${barProgress}%` } as CSSProperties}
+                      />
+                    </div>
+                    <span className={styles.dayLabel}>
+                      {isToday
+                        ? "Today"
+                        : new Intl.DateTimeFormat(undefined, {
+                            weekday: "narrow",
+                            timeZone: "UTC",
+                          }).format(new Date(`${day.localDate}T12:00:00Z`))}
+                    </span>
+                    <span className={styles.dayValue}>
+                      {day.consumedMl === 0
+                        ? "0 L"
+                        : `${(day.consumedMl / 1000).toLocaleString(undefined, {
+                            maximumFractionDigits: 1,
+                          })} L`}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </section>
 
@@ -303,11 +366,11 @@ export function HydrationPage() {
             <p className={styles.eyebrow}>Entries</p>
             <h2 id="today-history-title">Today&apos;s history</h2>
 
-            {overview.entries.length === 0 ? (
+            {overview.todayEntries.length === 0 ? (
               <p>No water recorded yet.</p>
             ) : (
               <ol className={styles.entryList}>
-                {overview.entries.map((entry) => (
+                {overview.todayEntries.map((entry) => (
                   <li key={entry.id}>
                     <Droplets aria-hidden="true" className={styles.entryIcon} size={18} />
                     <span>{entry.amountMl} ml</span>

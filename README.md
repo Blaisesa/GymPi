@@ -4,7 +4,7 @@ GymPi is an open-source, privacy-first household fitness and wellness platform b
 
 ## Status
 
-GymPi is in active foundation development. The repository contains the mobile-first React application shell, ASP.NET Core modular monolith, operational health slice, PostgreSQL-backed household profiles, and append-only daily hydration tracking.
+GymPi is in active foundation development. The repository contains the mobile-first React application shell, ASP.NET Core modular monolith, operational health slice, PostgreSQL-backed household profiles, and append-only hydration tracking with a seven-day view.
 
 ## Architecture
 

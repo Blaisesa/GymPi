@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import {
-  getHydrationOverview,
+  getHydration,
   recordHydrationEntry,
 } from "./hydrationClient";
 
@@ -10,26 +10,26 @@ afterEach(() => {
 });
 
 describe("hydrationClient", () => {
-  it("loads today's hydration overview", async () => {
-    const overview = {
-      localDate: "2026-09-15",
+  it("loads a bounded hydration range", async () => {
+    const hydration = {
+      startDate: "2026-09-09",
+      endDate: "2026-09-15",
       timeZoneId: "Europe/Dublin",
-      goalMl: 2500,
-      consumedMl: 250,
-      remainingMl: 2250,
-      entries: [],
+      dailyGoalMl: 2500,
+      days: [{ localDate: "2026-09-15", consumedMl: 250 }],
+      todayEntries: [],
     };
     vi.stubGlobal(
       "fetch",
       vi.fn().mockResolvedValue({
-        json: vi.fn().mockResolvedValue(overview),
+        json: vi.fn().mockResolvedValue(hydration),
         ok: true,
       }),
     );
 
-    await expect(getHydrationOverview("profile-id")).resolves.toEqual(overview);
+    await expect(getHydration("profile-id")).resolves.toEqual(hydration);
     expect(fetch).toHaveBeenCalledWith(
-      "/api/profiles/profile-id/hydration-overview",
+      "/api/profiles/profile-id/hydration?days=7",
       {
         headers: { Accept: "application/json" },
         signal: undefined,
@@ -77,7 +77,28 @@ describe("hydrationClient", () => {
       }),
     );
 
-    await expect(getHydrationOverview("profile-id")).rejects.toThrow(
+    await expect(getHydration("profile-id")).rejects.toThrow(
+      "GymPi hydration response was invalid.",
+    );
+  });
+
+  it("rejects a hydration range with an unusable daily goal", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        json: vi.fn().mockResolvedValue({
+          startDate: "2026-09-15",
+          endDate: "2026-09-15",
+          timeZoneId: "Europe/Dublin",
+          dailyGoalMl: 0,
+          days: [{ localDate: "2026-09-15", consumedMl: 0 }],
+          todayEntries: [],
+        }),
+        ok: true,
+      }),
+    );
+
+    await expect(getHydration("profile-id")).rejects.toThrow(
       "GymPi hydration response was invalid.",
     );
   });

@@ -19,7 +19,7 @@ public sealed class HydrationEndpointTests
     }
 
     [Fact]
-    public async Task RecordHydrationPersistsItInTodaysOverview()
+    public async Task RecordHydrationAppearsInGeneralHydrationResource()
     {
         var cancellationToken = TestContext.Current.CancellationToken;
         var profileId = await CreateProfileAsync(cancellationToken);
@@ -35,17 +35,19 @@ public sealed class HydrationEndpointTests
             .ReadFromJsonAsync<JsonElement>(cancellationToken);
         Assert.Equal(250, createdEntry.GetProperty("amountMl").GetInt32());
 
-        var overview = await client.GetFromJsonAsync<JsonElement>(
-            $"/api/profiles/{profileId}/hydration-overview",
+        var hydration = await client.GetFromJsonAsync<JsonElement>(
+            $"/api/profiles/{profileId}/hydration?days=7",
             cancellationToken);
 
-        Assert.Equal(2500, overview.GetProperty("goalMl").GetInt32());
+        Assert.Equal(2500, hydration.GetProperty("dailyGoalMl").GetInt32());
         Assert.Equal(
             "Europe/Dublin",
-            overview.GetProperty("timeZoneId").GetString());
-        Assert.Equal(250, overview.GetProperty("consumedMl").GetInt32());
-        Assert.Equal(2250, overview.GetProperty("remainingMl").GetInt32());
-        Assert.Single(overview.GetProperty("entries").EnumerateArray());
+            hydration.GetProperty("timeZoneId").GetString());
+
+        var days = hydration.GetProperty("days").EnumerateArray().ToArray();
+        Assert.Equal(7, days.Length);
+        Assert.Equal(250, days[^1].GetProperty("consumedMl").GetInt32());
+        Assert.Single(hydration.GetProperty("todayEntries").EnumerateArray());
     }
 
     [Theory]
@@ -65,15 +67,30 @@ public sealed class HydrationEndpointTests
     }
 
     [Fact]
-    public async Task HydrationOverviewReturnsNotFoundForUnknownProfile()
+    public async Task HydrationReturnsNotFoundForUnknownProfile()
     {
         var cancellationToken = TestContext.Current.CancellationToken;
 
         using var response = await client.GetAsync(
-            $"/api/profiles/{Guid.NewGuid()}/hydration-overview",
+            $"/api/profiles/{Guid.NewGuid()}/hydration?days=7",
             cancellationToken);
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(32)]
+    public async Task HydrationRejectsAnUnboundedDayRange(int days)
+    {
+        var cancellationToken = TestContext.Current.CancellationToken;
+        var profileId = await CreateProfileAsync(cancellationToken);
+
+        using var response = await client.GetAsync(
+            $"/api/profiles/{profileId}/hydration?days={days}",
+            cancellationToken);
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
     private async Task<Guid> CreateProfileAsync(CancellationToken cancellationToken)

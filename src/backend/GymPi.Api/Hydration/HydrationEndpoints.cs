@@ -11,8 +11,8 @@ public static class HydrationEndpoints
             "/api/profiles/{profileId:guid}/hydration-entries",
             RecordHydrationAsync);
         endpoints.MapGet(
-            "/api/profiles/{profileId:guid}/hydration-overview",
-            GetHydrationOverviewAsync);
+            "/api/profiles/{profileId:guid}/hydration",
+            GetHydrationAsync);
 
         return endpoints;
     }
@@ -45,18 +45,28 @@ public static class HydrationEndpoints
         }
     }
 
-    private static async Task<IResult> GetHydrationOverviewAsync(
+    private static async Task<IResult> GetHydrationAsync(
         Guid profileId,
-        GetHydrationOverviewHandler handler,
+        int? days,
+        GetHydrationHandler handler,
         CancellationToken cancellationToken)
     {
         try
         {
-            var overview = await handler.HandleAsync(
+            var hydration = await handler.HandleAsync(
                 profileId,
+                days ?? GetHydrationHandler.DefaultDays,
                 cancellationToken);
 
-            return Results.Ok(overview);
+            return Results.Ok(hydration);
+        }
+        catch (ArgumentException exception) when (exception.ParamName is not null)
+        {
+            return Results.ValidationProblem(
+                new Dictionary<string, string[]>
+                {
+                    [exception.ParamName] = [exception.Message],
+                });
         }
         catch (KeyNotFoundException)
         {

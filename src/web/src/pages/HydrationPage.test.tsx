@@ -12,25 +12,41 @@ vi.mock("../features/hydration/waterDropSound");
 const profileId = "2e6a67ff-6e09-46a1-87ec-cf674a3ccbc4";
 
 const emptyOverview = {
-  localDate: "2026-09-15",
+  startDate: "2026-09-15",
+  endDate: "2026-09-15",
   timeZoneId: "Europe/Dublin",
-  goalMl: 2500,
-  consumedMl: 0,
-  remainingMl: 2500,
-  entries: [],
+  dailyGoalMl: 2500,
+  days: [{ localDate: "2026-09-15", consumedMl: 0 }],
+  todayEntries: [],
 };
 
 const updatedOverview = {
   ...emptyOverview,
-  consumedMl: 250,
-  remainingMl: 2250,
-  entries: [
+  days: [{ localDate: "2026-09-15", consumedMl: 250 }],
+  todayEntries: [
     {
       id: "b9c4fc26-52cd-4f42-9ad8-a891389e42ce",
       amountMl: 250,
       consumedAtUtc: "2026-09-15T12:30:00Z",
     },
   ],
+};
+
+const weeklyHydration = {
+  startDate: "2026-09-09",
+  endDate: "2026-09-15",
+  timeZoneId: "Europe/Dublin",
+  dailyGoalMl: 2500,
+  days: [
+    { localDate: "2026-09-09", consumedMl: 2000 },
+    { localDate: "2026-09-10", consumedMl: 2500 },
+    { localDate: "2026-09-11", consumedMl: 0 },
+    { localDate: "2026-09-12", consumedMl: 1500 },
+    { localDate: "2026-09-13", consumedMl: 2800 },
+    { localDate: "2026-09-14", consumedMl: 1000 },
+    { localDate: "2026-09-15", consumedMl: 250 },
+  ],
+  todayEntries: updatedOverview.todayEntries,
 };
 
 function jsonResponse(payload: unknown, status = 200) {
@@ -49,6 +65,27 @@ beforeEach(() => {
 });
 
 describe("HydrationPage", () => {
+  it("shows seven profile-local hydration days", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(jsonResponse(weeklyHydration)),
+    );
+
+    render(
+      <MemoryRouter>
+        <ActiveProfileProvider>
+          <HydrationPage />
+        </ActiveProfileProvider>
+      </MemoryRouter>,
+    );
+
+    const chart = await screen.findByRole("region", {
+      name: "Last seven days",
+    });
+    expect(within(chart).getAllByRole("meter")).toHaveLength(7);
+    expect(within(chart).getByText("0 L")).toBeInTheDocument();
+  });
+
   it("shows the recorded drink count beside daily progress", async () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(jsonResponse(updatedOverview)));
     render(

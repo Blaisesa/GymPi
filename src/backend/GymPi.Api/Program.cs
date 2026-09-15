@@ -15,7 +15,7 @@ builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddScoped<CreateProfileHandler>();
 builder.Services.AddScoped<ListProfilesHandler>();
 builder.Services.AddScoped<RecordHydrationHandler>();
-builder.Services.AddScoped<GetHydrationOverviewHandler>();
+builder.Services.AddScoped<GetHydrationHandler>();
 builder.Services.AddGymPiInfrastructure(builder.Configuration);
 
 var app = builder.Build();

@@ -4,13 +4,18 @@ export interface HydrationEntry {
   consumedAtUtc: string;
 }
 
-export interface HydrationOverview {
+export interface HydrationDaySummary {
   localDate: string;
-  timeZoneId: string;
-  goalMl: number;
   consumedMl: number;
-  remainingMl: number;
-  entries: HydrationEntry[];
+}
+
+export interface HydrationSummary {
+  startDate: string;
+  endDate: string;
+  timeZoneId: string;
+  dailyGoalMl: number;
+  days: HydrationDaySummary[];
+  todayEntries: HydrationEntry[];
 }
 
 function isHydrationEntry(value: unknown): value is HydrationEntry {
@@ -26,32 +31,50 @@ function isHydrationEntry(value: unknown): value is HydrationEntry {
   );
 }
 
-function isHydrationOverview(value: unknown): value is HydrationOverview {
+function isHydrationDaySummary(value: unknown): value is HydrationDaySummary {
   return (
     typeof value === "object" &&
     value !== null &&
     "localDate" in value &&
     typeof value.localDate === "string" &&
-    "goalMl" in value &&
-    Number.isInteger(value.goalMl) &&
     "consumedMl" in value &&
+    typeof value.consumedMl === "number" &&
     Number.isInteger(value.consumedMl) &&
-    "remainingMl" in value &&
-    Number.isInteger(value.remainingMl) &&
-    "timeZoneId" in value &&
-    typeof value.timeZoneId === "string" &&
-    "entries" in value &&
-    Array.isArray(value.entries) &&
-    value.entries.every(isHydrationEntry)
+    value.consumedMl >= 0
   );
 }
 
-export async function getHydrationOverview(
+function isHydrationSummary(value: unknown): value is HydrationSummary {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "startDate" in value &&
+    typeof value.startDate === "string" &&
+    "endDate" in value &&
+    typeof value.endDate === "string" &&
+    "timeZoneId" in value &&
+    typeof value.timeZoneId === "string" &&
+    "dailyGoalMl" in value &&
+    typeof value.dailyGoalMl === "number" &&
+    Number.isInteger(value.dailyGoalMl) &&
+    value.dailyGoalMl > 0 &&
+    "days" in value &&
+    Array.isArray(value.days) &&
+    value.days.length > 0 &&
+    value.days.every(isHydrationDaySummary) &&
+    "todayEntries" in value &&
+    Array.isArray(value.todayEntries) &&
+    value.todayEntries.every(isHydrationEntry)
+  );
+}
+
+export async function getHydration(
   profileId: string,
+  days = 7,
   signal?: AbortSignal,
-): Promise<HydrationOverview> {
+): Promise<HydrationSummary> {
   const response = await fetch(
-    `/api/profiles/${encodeURIComponent(profileId)}/hydration-overview`,
+    `/api/profiles/${encodeURIComponent(profileId)}/hydration?days=${days}`,
     {
       headers: { Accept: "application/json" },
       signal,
@@ -66,7 +89,7 @@ export async function getHydrationOverview(
 
   const payload: unknown = await response.json();
 
-  if (!isHydrationOverview(payload)) {
+  if (!isHydrationSummary(payload)) {
     throw new Error("GymPi hydration response was invalid.");
   }
 
