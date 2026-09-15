@@ -1,4 +1,7 @@
 using GymPi.Api.Health;
+using GymPi.Api.Profiles;
+using GymPi.Application.Profiles;
+using GymPi.Infrastructure;
 
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
@@ -6,6 +9,10 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddHealthChecks();
+builder.Services.AddSingleton(TimeProvider.System);
+builder.Services.AddScoped<CreateProfileHandler>();
+builder.Services.AddScoped<ListProfilesHandler>();
+builder.Services.AddGymPiInfrastructure(builder.Configuration);
 
 var app = builder.Build();
 
@@ -16,6 +23,7 @@ app.MapHealthChecks(
         ResponseWriter = (context, report) => context.Response.WriteAsJsonAsync(
             new SystemHealthResponse(report.Status.ToString().ToLowerInvariant())),
     });
+app.MapProfileEndpoints();
 
 app.Run();
 

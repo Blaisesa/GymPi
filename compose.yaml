@@ -1,0 +1,23 @@
+services:
+  postgres:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_DB: ${GYMPI_POSTGRES_DB:-gympi}
+      POSTGRES_PASSWORD: ${GYMPI_POSTGRES_PASSWORD:?Set GYMPI_POSTGRES_PASSWORD in .env}
+      POSTGRES_USER: ${GYMPI_POSTGRES_USER:-gympi}
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - gympi-postgres-data:/var/lib/postgresql
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    restart: unless-stopped
+
+volumes:
+  gympi-postgres-data:
